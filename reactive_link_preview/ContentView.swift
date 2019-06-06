@@ -41,7 +41,7 @@ final class LinkPreviewData: BindableObject {
         let url = URLBuilder.build(urlString)
         let provider = LPMetadataProvider()
         provider.startFetchingMetadata(for: url) { metadata, error in
-            if let _ = error { return }
+            guard error == nil else { return }
             guard let metadata = metadata else { return }
             self.metadata = metadata
         }
@@ -67,7 +67,7 @@ struct LinkView: UIViewRepresentable {
 
     /// Creates a `UIView` instance to be presented.
     func makeUIView(context: UIViewRepresentableContext<LinkView>) -> LPLinkView {
-        return LPLinkView(frame: .zero)
+        LPLinkView(frame: .zero)
     }
 
     /// Updates the presented `UIView` (and coordinator) to the latest
