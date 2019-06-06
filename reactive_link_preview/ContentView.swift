@@ -18,7 +18,7 @@ struct LinkDisplayView: View {
         VStack {
             // TODO: explore how to display `LPLinkView` under SwiftUI,
             // check `LinkView` below. for now we display just the title from metadata
-            TextField($link, placeholder: Text("...enter some link, eg: https://apple.com")) {
+            TextField($link, placeholder: Text("...enter some link, eg: apple.com, then press enter")) {
                 self.preview.fetch(self.link)
             }
 
