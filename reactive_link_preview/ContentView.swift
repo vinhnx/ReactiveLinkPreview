@@ -16,6 +16,8 @@ struct LinkDisplayView: View {
 
     var body: some View {
         VStack {
+            // TODO: explore how to display `LPLinkView` under SwiftUI,
+            // check `LinkView` below. for now we display just the title from metadata
             TextField($link, placeholder: Text("...enter some link, eg: https://apple.com")) {
                 self.preview.fetch(self.link)
             }
@@ -54,5 +56,23 @@ struct URLBuilder {
         }
 
         return URL(string: (https + urlString))!
+    }
+}
+
+// -- This doesn't work yet, exploring...
+struct LinkView: UIViewRepresentable {
+    @Binding var metadata: LPLinkMetadata
+
+    // MARK: - UIViewRepresentable
+
+    /// Creates a `UIView` instance to be presented.
+    func makeUIView(context: UIViewRepresentableContext<LinkView>) -> LPLinkView {
+        return LPLinkView(frame: .zero)
+    }
+
+    /// Updates the presented `UIView` (and coordinator) to the latest
+    /// configuration.
+    func updateUIView(_ linkView: LPLinkView, context: UIViewRepresentableContext<LinkView>) {
+        linkView.metadata = self.metadata
     }
 }
