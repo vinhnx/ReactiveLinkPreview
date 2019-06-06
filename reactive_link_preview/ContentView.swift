@@ -76,3 +76,12 @@ struct LinkView: UIViewRepresentable {
         linkView.metadata = self.metadata
     }
 }
+
+
+#if DEBUG
+struct LinkDisplayView_Previews : PreviewProvider {
+    static var previews: some View {
+        LinkDisplayView()
+    }
+}
+#endif
