@@ -6,18 +6,53 @@
 //  Copyright © 2019 Vinh Nguyen. All rights reserved.
 //
 
+import Combine
+import LinkPresentation
 import SwiftUI
 
-struct ContentView : View {
+struct LinkDisplayView: View {
+    @EnvironmentObject var preview: LinkPreviewData
+    @State var link = ""
+
     var body: some View {
-        Text("Hello World")
+        VStack {
+            TextField($link, placeholder: Text("...enter some link, eg: https://apple.com")) {
+                self.preview.fetch(self.link)
+            }
+
+            Text("\(preview.metadata.title ?? "...")")
+        }
     }
 }
 
-#if DEBUG
-struct ContentView_Previews : PreviewProvider {
-    static var previews: some View {
-        ContentView()
+final class LinkPreviewData: BindableObject {
+    internal let didChange = PassthroughSubject<LinkPreviewData, Never>()
+    public private(set) var metadata = LPLinkMetadata() {
+        didSet {
+            DispatchQueue.main.async {
+                self.didChange.send(self)
+            }
+        }
+    }
+
+    func fetch(_ urlString: String) {
+        let url = URLBuilder.build(urlString)
+        let provider = LPMetadataProvider()
+        provider.startFetchingMetadata(for: url) { metadata, error in
+            if let _ = error { return }
+            guard let metadata = metadata else { return }
+            self.metadata = metadata
+        }
     }
 }
-#endif
+
+struct URLBuilder {
+    static func build(_ urlString: String) -> URL {
+        let https = "https://"
+        if urlString.hasPrefix(https) {
+            return URL(string: urlString)!
+        }
+
+        return URL(string: (https + urlString))!
+    }
+}
