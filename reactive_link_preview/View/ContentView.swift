@@ -16,12 +16,19 @@ struct LinkDisplayView: View {
 
     var body: some View {
         VStack {
-            TextField($link, placeholder: Text("...enter some link, eg: apple.com, then press enter")) {
-                self.preview.fetch(self.link)
-            }
-
             LinkView(data: $preview.metadata)
                 .frame(width: 300, height: 300)
+
+            // receive textfield text editing notification (events) via NotificationCenter Publisher
+            // thanks: https://github.com/Dimillian/MovieSwiftUI/blob/a51bbe2502851f6f3dcabf730b2f72318232fcc1/MovieSwift/MovieSwift/views/shared/field/SearchField.swift#L25-L28
+            TextField($link, placeholder: Text("eg: apple.com"))
+                .onReceive(
+                    NotificationCenter.default
+                        .publisher(for: UITextField.textDidChangeNotification)
+                        .debounce(for: 0.5, scheduler: DispatchQueue.main),
+                    perform: { self.preview.fetch(self.link) }
+                )
+                .textFieldStyle(.roundedBorder)
         }.padding()
     }
 }
