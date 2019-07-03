@@ -26,7 +26,8 @@ struct LinkDisplayView: View {
                 .onReceive(
                     NotificationCenter.default
                         .publisher(for: UITextField.textDidChangeNotification)
-                        .debounce(for: 0.5, scheduler: DispatchQueue.main),
+                        .debounce(for: 0.5, scheduler: DispatchQueue.main)
+                        .removeDuplicates(),
                     perform: fetch
                 )
         }.padding()
